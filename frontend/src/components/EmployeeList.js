@@ -1,64 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './EmployeeList.css'; // Import the CSS file for styling
+import { useNavigate } from 'react-router-dom';
+import './EmployeeList.css';
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('/api/employees');
+        const response = await axios.get('http://localhost:5000/api/employees');
         setEmployees(response.data);
       } catch (error) {
         console.error('Error fetching employees:', error);
       }
     };
-
+    
     fetchEmployees();
   }, []);
+
+  const handleEdit = (employee) => {
+    // Navigate to the edit page with employee data
+    navigate('/edit-employee', { state: { employee } });
+  };
+
+  const handleDelete = async (email) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/employees/${email}`);
+      setEmployees(employees.filter(emp => emp.email !== email));
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
+  };
 
   return (
     <div className="employee-list-container">
       <h2>Employee List</h2>
-      <table className="employee-table">
+      <table>
         <thead>
           <tr>
+            <th>Unique Id</th>
+            <th>Image</th>
             <th>Name</th>
             <th>Email</th>
             <th>Mobile No</th>
             <th>Designation</th>
             <th>Gender</th>
             <th>Course</th>
-            <th>Image</th>
+            <th>Create Date</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {employees.length > 0 ? (
-            employees.map((employee, index) => (
-              <tr key={index}>
-                <td>{employee.name}</td>
-                <td>{employee.email}</td>
-                <td>{employee.mobile}</td>
-                <td>{employee.designation}</td>
-                <td>{employee.gender}</td>
-                <td>{employee.course}</td>
-                <td>
-                  {employee.image && (
-                    <img
-                      src={`http://localhost:5000/${employee.image}`}
-                      alt="Employee"
-                      className="employee-image"
-                    />
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="7">No employees found.</td>
+          {employees.map((emp, index) => (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td><img src={emp.image} alt={emp.name} className="employee-image" /></td>
+              <td>{emp.name}</td>
+              <td>{emp.email}</td>
+              <td>{emp.mobile}</td>
+              <td>{emp.designation}</td>
+              <td>{emp.gender}</td>
+              <td>{Array.isArray(emp.course) ? emp.course.join(', ') : emp.course}</td>
+              <td>{new Date().toLocaleDateString()}</td>
+              <td>
+                <button onClick={() => handleEdit(emp)}>Edit</button>
+                <button onClick={() => handleDelete(emp.email)}>Delete</button>
+              </td>
             </tr>
-          )}
+          ))}
         </tbody>
       </table>
     </div>

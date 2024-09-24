@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './EmployeeForm.css'; // Import the CSS file for styling
+import './EmployeeForm.css'; 
 
 const EmployeeForm = () => {
   const [employee, setEmployee] = useState({

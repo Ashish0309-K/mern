@@ -1,49 +1,29 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const port = 5000;
 
-// Middleware
 app.use(cors());
-app.use(express.json()); // For parsing application/json
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Destination folder
+    cb(null, 'uploads/'); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // File name
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
+
 const upload = multer({ storage: storage });
 
-// In-memory storage for employees
+// In-memory storage for simplicity
 let employees = [];
-
-// Route to login a user
-app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body;
-  const user = users.find(user => user.username === username);
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid credentials' });
-  }
-
-  try {
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-    const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ token });
-  } catch (error) {
-    console.error('Error logging in user:', error);
-    res.status(500).json({ message: 'Failed to login user.' });
-  }
-});
 
 // Route to create employee
 app.post('/api/employees', upload.single('image'), (req, res) => {
@@ -51,8 +31,11 @@ app.post('/api/employees', upload.single('image'), (req, res) => {
     const { name, email, mobile, designation, gender, course } = req.body;
     const image = req.file ? req.file.path : null;
 
+    // Ensure course is an array
+    const courseArray = Array.isArray(course) ? course : [course];
+
     // Save employee data
-    const newEmployee = { name, email, mobile, designation, gender, course, image };
+    const newEmployee = { name, email, mobile, designation, gender, course: courseArray, image };
     employees.push(newEmployee);
 
     res.status(201).json({ message: 'Employee created successfully!' });
@@ -61,6 +44,7 @@ app.post('/api/employees', upload.single('image'), (req, res) => {
     res.status(500).json({ message: 'Failed to create employee.' });
   }
 });
+
 
 // Route to get employees
 app.get('/api/employees', (req, res) => {
@@ -72,7 +56,51 @@ app.get('/api/employees', (req, res) => {
   }
 });
 
-// Start server
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+
+
+
+
+// Route to update an employee
+app.put('/api/employees/:email', upload.single('image'), (req, res) => {
+  try {
+    const { email } = req.params;
+    const { name, mobile, designation, gender, course } = req.body;
+    const image = req.file ? req.file.path : null;
+
+    // Find and update employee
+    const employeeIndex = employees.findIndex(emp => emp.email === email);
+    if (employeeIndex === -1) {
+      return res.status(404).json({ message: 'Employee not found.' });
+    }
+
+    // Update the employee data
+    employees[employeeIndex] = { name, email, mobile, designation, gender, course, image };
+    res.status(200).json({ message: 'Employee updated successfully!' });
+  } catch (error) {
+    console.error('Error updating employee:', error);
+    res.status(500).json({ message: 'Failed to update employee.' });
+  }
+});
+
+
+// Route to delete an employee
+app.delete('/api/employees/:email', (req, res) => {
+  try {
+    const { email } = req.params;
+    const index = employees.findIndex(emp => emp.email === email);
+    
+    if (index !== -1) {
+      employees.splice(index, 1);
+      res.status(200).json({ message: 'Employee deleted successfully!' });
+    } else {
+      res.status(404).json({ message: 'Employee not found.' });
+    }
+  } catch (error) {
+    console.error('Error deleting employee:', error);
+    res.status(500).json({ message: 'Failed to delete employee.' });
+  }
 });

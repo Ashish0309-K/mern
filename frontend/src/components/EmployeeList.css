@@ -1,43 +1,64 @@
+/* Container for the employee list */
 .employee-list-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .employee-list-container h2 {
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
-  }
-  
-  .employee-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-  }
-  
-  .employee-table th, .employee-table td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: left;
-  }
-  
-  .employee-table th {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .employee-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .employee-table tr:hover {
-    background-color: #ddd;
-  }
-  
-  .employee-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-list-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table img.employee-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+button {
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  margin: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button + button {
+  background-color: #dc3545;
+}
+
+button + button:hover {
+  background-color: #c82333;
+}

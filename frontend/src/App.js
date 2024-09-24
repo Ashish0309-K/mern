@@ -5,6 +5,7 @@ import EmployeeList from './components/EmployeeList';
 import CreateEmployee from './components/EmployeeForm';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import EditEmployee from './components/EditEmployee';
 import './index.css';
 
 const App = () => {
@@ -36,11 +37,11 @@ const App = () => {
 
       <div className="content">
         <Routes>
-          <Route path="/" element={<Login />} />{/* Login page route */}
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Login />} />
           <Route path="/employee-list" element={<EmployeeList />} />
           <Route path="/create-employee" element={<CreateEmployee />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/edit-employee" element={<EditEmployee />} />
         </Routes>
       </div>
 
